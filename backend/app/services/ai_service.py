@@ -26,6 +26,10 @@ async def analyze_content(text: str, bvid: str = ""):
             content=text[:10000]
         )
 
+        # 调试：打印实际发送给AI的prompt
+        print(f"   [AI Debug] 发送给AI的Prompt长度: {len(summary_prompt)}")
+        print(f"   [AI Debug] Prompt预览: {summary_prompt[:300]}...")
+
         # 获取输出配置
         summary_config = prompt_manager.get_output_config("video_summary")
 
