@@ -21,7 +21,10 @@ __pycache__/
 data/
 backend/data/
 *.json
-*.txt
+# 排除具体的不想要的txt文件，但允许requirements.txt
+cookies.txt
+guest_cookies.txt
+# *.txt  # 移除通用排除，改为具体排除
 
 # IDE和编辑器
 .vscode/
