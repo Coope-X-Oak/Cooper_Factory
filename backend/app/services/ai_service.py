@@ -23,7 +23,7 @@ async def analyze_content(text: str, bvid: str = ""):
         # 使用配置化的Prompt
         summary_prompt = prompt_manager.get_prompt(
             "video_summary",
-            content=text[:3000]
+            content=text[:10000]
         )
 
         # 获取输出配置

@@ -17,7 +17,7 @@ variables:
   - name: "content"
     description: "视频的完整内容文本"
     required: true
-    max_length: 3000
+    max_length: 10000
 
 output:
   format: "text"
