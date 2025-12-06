@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cooper Intelligence Factory</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #020617; color: #e2e8f0; }
+        .neon-text { text-shadow: 0 0 10px rgba(6, 182, 212, 0.5); }
+    </style>
+</head>
+<body class="min-h-screen p-8 font-sans">
+    <div class="max-w-4xl mx-auto">
+        <header class="mb-10 flex items-center gap-4 border-b border-slate-800 pb-6">
+            <div class="p-3 bg-cyan-950/30 border border-cyan-500/30 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-cyan-400"><rect width="8" height="8" x="2" y="2" rx="2"/><path d="M14 2c.6.5 1.2 1 2 2"/><path d="M20 2c.6.5 1.2 1 2 2"/><path d="M10 22c-5 0-10-4-10-9 .5 1.5 2 2.5 4 3"/><path d="M20 22c5 0 10-4 10-9-.5 1.5-2 2.5-4 3"/><rect width="8" height="8" x="14" y="14" rx="2"/></svg>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold text-slate-100 tracking-wider">COOPER <span class="text-cyan-400 neon-text">INTELLIGENCE</span> FACTORY</h1>
+                <p class="text-xs text-slate-500 font-mono mt-1">SYSTEM STATUS: ONLINE // PORT: 8000</p>
+            </div>
+        </header>
+
+        <div class="bg-slate-900/50 border border-slate-800 rounded-xl p-6 mb-8 shadow-2xl">
+            <div class="flex gap-4">
+                <input type="text" id="videoUrl" placeholder="输入 Bilibili 视频链接 (例如: BV...)" 
+                    class="flex-1 bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-cyan-500 transition">
+                <button onclick="startAnalysis()" id="analyzeBtn"
+                    class="bg-cyan-600 hover:bg-cyan-500 text-white px-8 py-3 rounded-lg font-medium transition shadow-lg shadow-cyan-900/20 flex items-center gap-2">
+                    <span>开始提取</span>
+                </button>
+            </div>
+            <div id="statusBar" class="mt-4 text-cyan-400 text-sm font-mono">
+                <span id="statusText">> 准备就绪...</span>
+            </div>
+        </div>
+
+
+
+        <div id="resultArea" class="hidden space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+                <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <span class="w-1 h-6 bg-cyan-500 rounded-full"></span> 核心摘要
+                </h3>
+                <p id="summaryText" class="text-slate-300 leading-relaxed"></p>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+                <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <span class="w-1 h-6 bg-orange-500 rounded-full"></span> 字幕大纲
+                </h3>
+                <p id="subtitleOutlineText" class="text-slate-300 leading-relaxed"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function startAnalysis() {
+            const url = document.getElementById('videoUrl').value;
+            const btn = document.getElementById('analyzeBtn');
+            const resultArea = document.getElementById('resultArea');
+            const statusText = document.getElementById('statusText');
+
+            if(!url) return alert('请输入链接');
+
+            btn.disabled = true;
+            btn.textContent = '处理中...';
+            statusText.textContent = '> 正在分析视频...';
+            resultArea.classList.add('hidden');
+
+            try {
+                // 使用相对路径 API
+                const response = await fetch(`/analyze?url=${encodeURIComponent(url)}`, { method: 'POST' });
+                if (!response.ok) throw new Error('API 请求失败');
+                const data = await response.json();
+                renderData(data);
+            } catch (error) {
+                alert('提取失败: ' + error.message + '\\n\\n提示: 确保访问的是 http://127.0.0.1:8000');
+                statusText.textContent = '> 处理失败，请重试';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span>开始提取</span>';
+            }
+        }
+
+        function renderData(data) {
+            document.getElementById('resultArea').classList.remove('hidden');
+            document.getElementById('summaryText').innerText = data.summary || '暂无摘要';
+
+            // 处理字幕大纲中的时间戳链接
+            let outlineText = data.subtitleOutline || '暂无字幕大纲';
+
+            // 从URL中提取BV号
+            const url = document.getElementById('videoUrl').value;
+            const bvMatch = url.match(/BV[a-zA-Z0-9]{10}/);
+            if (bvMatch) {
+                const bvid = bvMatch[0];
+                // 替换占位符为实际链接
+                outlineText = outlineText.replace(/\[BV号\]/g, bvid);
+                outlineText = outlineText.replace(/https:\/\/www\.bilibili\.com\/video\/\[BV号\]/g, `https://www.bilibili.com/video/${bvid}`);
+            }
+
+            document.getElementById('subtitleOutlineText').innerHTML = outlineText.replace(/\n/g, '<br>');
+            document.getElementById('statusText').textContent = '> 处理完成';
+        }
+    </script>
+</body>
+</html>

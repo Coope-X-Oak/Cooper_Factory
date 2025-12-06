@@ -1,0 +1,25 @@
+name: "video_summary"
+version: "1.0"
+description: "生成视频内容的核心摘要"
+
+template: |
+  请分析以下视频内容，生成一个200字以内的核心摘要。
+
+  要求：
+  1. 提炼视频的核心观点和主要内容
+  2. 保持客观中立
+  3. 控制在200字以内
+
+  视频内容：
+  {content}
+
+variables:
+  - name: "content"
+    description: "视频的完整内容文本"
+    required: true
+    max_length: 3000
+
+output:
+  format: "text"
+  max_tokens: 300
+  temperature: 0.3

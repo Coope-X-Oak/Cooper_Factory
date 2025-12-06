@@ -1,0 +1,72 @@
+# 环境变量和API密钥
+.env
+.env.local
+.env.*.local
+
+# Cookie文件（包含个人登录信息）
+cookies.txt
+guest_cookies.txt
+
+# 模板文件应该上传到仓库（让新开发者使用）
+# .env.example      <- 保留，上传到仓库
+# cookies.txt.example  <- 保留，上传到仓库
+
+# Python缓存
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# 数据文件
+data/
+backend/data/
+*.json
+*.txt
+
+# IDE和编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 操作系统
+.DS_Store
+Thumbs.db
+
+# 日志文件
+*.log
+logs/
+
+# 临时文件
+*.tmp
+*.temp
+
+# 虚拟环境
+venv/
+env/
+ENV/
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# 测试覆盖率
+.coverage
+htmlcov/
+
+# 构建文件
+build/
+dist/
+*.egg-info/
+
+# 浏览器自动化临时文件
+.playwright/
+
+# yt-dlp缓存
+.yt-dlp/
+
+# 测试和开发文件（不上传到仓库）
+backend/test/
+test/
+*.pyc
+__pycache__/

@@ -1,0 +1,70 @@
+# Cooper Intelligence Factory - Bilibili Cookies Template
+# Copy this file to cookies.txt and fill in your actual cookie values
+
+# ========================================
+# HOW TO GET BILIBILI COOKIES
+# ========================================
+
+# 1. Open browser and login to https://www.bilibili.com
+# 2. Press F12 to open Developer Tools
+# 3. Go to Application/Storage → Cookies → https://.bilibili.com
+# 4. Copy the values for these essential cookies:
+#    - SESSDATA (required - login session)
+#    - bili_jct (required - CSRF token)
+#    - DedeUserID (optional - user ID)
+#    - DedeUserID__ckMd5 (optional - user ID checksum)
+
+# ========================================
+# COOKIE FORMAT (Netscape format)
+# ========================================
+
+# Line format: domain<TAB>flag<TAB>path<TAB>secure<TAB>expiration<TAB>name<TAB>value
+
+.bilibili.com	TRUE	/	FALSE	1735689600	SESSDATA	your-sessdata-value-here
+.bilibili.com	TRUE	/	FALSE	1735689600	bili_jct	your-bili_jct-value-here
+.bilibili.com	TRUE	/	FALSE	1735689600	DedeUserID	your-user-id-here
+.bilibili.com	TRUE	/	FALSE	1735689600	DedeUserID__ckMd5	your-checksum-here
+
+# ========================================
+# IMPORTANT NOTES
+# ========================================
+
+# 🔐 SECURITY WARNING:
+# - Never commit cookies.txt to git repository
+# - Keep this file secure and don't share it
+# - Cookies contain your personal login information
+# - Regularly update cookies as they expire
+
+# 🎯 WHEN TO USE COOKIES:
+# - Accessing member-only videos
+# - Getting premium content subtitles
+# - Bypassing region restrictions
+# - Accessing private or restricted videos
+
+# ⚠️ LEGAL REMINDER:
+# - Only use your own account's cookies
+# - Respect Bilibili's Terms of Service
+# - Don't use cookies for unauthorized access
+# - This is for personal development use only
+
+# 🔄 COOKIE EXPIRATION:
+# - Most Bilibili cookies expire in 30 days
+# - Check regularly and update when needed
+# - Watch for login prompts indicating expired cookies
+
+# 🧪 TESTING:
+# - Test cookie functionality locally first
+# - Use test scripts in backend/test/ directory
+# - Verify subtitle extraction works with cookies
+
+# ========================================
+# ALTERNATIVE: NO COOKIES MODE
+# ========================================
+
+# If you don't want to use cookies, the system will:
+# - Still work for public videos
+# - Extract basic metadata and danmaku
+# - Skip member-only content and premium subtitles
+# - Show helpful messages for restricted content
+
+# For full functionality, cookies are recommended but optional.

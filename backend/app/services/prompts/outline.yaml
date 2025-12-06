@@ -1,0 +1,46 @@
+name: "subtitle_outline"
+version: "1.0"
+description: "生成视频字幕的树状结构大纲"
+
+template: |
+  请分析以下视频字幕内容，生成一个逻辑清晰的树状文本大纲。
+
+  要求：
+  1. 使用树状结构展示视频逻辑框架
+  2. 提炼核心观点和关键论点
+  3. 展示博主的论证过程和逻辑层次
+  4. 使用纯文本格式，不要包含HTML标签
+  5. 在关键节点添加时间戳标记，格式为 [时间点] 内容
+  6. 大纲要详细完整，包含主要内容要点
+
+  示例格式：
+  📋 视频大纲：标题
+  ├── 🎯 [02:30] 核心论点1
+  │   ├── 💡 子论点1.1
+  │   ├── 💡 子论点1.2
+  │   └── 💡 子论点1.3
+  ├── 🎯 [05:45] 核心论点2
+  │   ├── 💡 子论点2.1
+  │   ├── 💡 子论点2.2
+  │   └── 💡 子论点2.3
+  ├── 🎯 [08:20] 核心论点3
+  │   ├── 💡 子论点3.1
+  │   └── 💡 子论点3.2
+  └── 🎯 结论和总结
+
+  字幕内容：
+  {subtitle_content}{timestamp_info}
+
+variables:
+  - name: "subtitle_content"
+    description: "视频字幕文本内容"
+    required: true
+    max_length: 4000
+  - name: "timestamp_info"
+    description: "时间戳信息（可选）"
+    required: false
+
+output:
+  format: "text"
+  max_tokens: 600
+  temperature: 0.3
