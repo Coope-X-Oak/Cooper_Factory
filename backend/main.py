@@ -84,28 +84,36 @@ async def analyze_video(url: str = Query(..., description="Bilibili视频链接"
         raise HTTPException(status_code=500, detail=f"Factory Error: {str(e)}")
 
 if __name__ == "__main__":
-    # 自动选择可用端口，避免冲突
+    # 部署环境使用环境变量端口，本地开发使用自动端口
+    import os
     import socket
-    import time
 
-    def find_available_port(start_port=8000, max_attempts=10):
-        """查找可用端口"""
-        for port in range(start_port, start_port + max_attempts):
-            try:
-                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                    s.bind(('', port))
-                    return port
-            except OSError:
-                continue
-        return start_port  # 如果都不可用，返回默认端口
+    port = int(os.environ.get("PORT", 8000))
 
-    port = find_available_port(8000, 10)
-    print(f">> Cooper Factory v2.0 Online: http://127.0.0.1:{port}")
+    # 如果是本地开发且端口被占用，自动找可用端口
+    if "PORT" not in os.environ:
+        def find_available_port(start_port=8000, max_attempts=10):
+            """查找可用端口"""
+            for port in range(start_port, start_port + max_attempts):
+                try:
+                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                        s.bind(('', port))
+                        return port
+                except OSError:
+                    continue
+            return start_port
 
-    # Windows 修复：使用 asyncio 事件循环而不是默认的
+        port = find_available_port(8000, 10)
+        print(f">> Cooper Factory v2.0 Online: http://127.0.0.1:{port}")
+    else:
+        print(f">> Cooper Factory v2.0 Deployed: Port {port}")
+
+    # 部署环境使用默认事件循环，本地开发使用asyncio
+    loop = "asyncio" if "PORT" not in os.environ else "auto"
+
     uvicorn.run(
         app,
-        host="127.0.0.1",
+        host="0.0.0.0" if "PORT" in os.environ else "127.0.0.1",
         port=port,
-        loop="asyncio"  # 明确指定使用 asyncio 事件循环
+        loop=loop
     )
