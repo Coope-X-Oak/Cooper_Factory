@@ -10,26 +10,28 @@
 - **时间戳跳转**：大纲中的时间戳链接可直接跳转到视频对应位置
 - **现代化界面**：基于FastAPI的后端 + 响应式Web前端
 
-## 🏗️ 项目结构 
+## 🏗️ 项目结构
 
 ```
 Cooper_Factory/
 ├── .gitignore              # Git忽略文件
 ├── README.md               # 项目说明
 ├── index.html              # 项目入口页面
-├── .env.example            # 环境变量配置模板
-├── cookies.txt.example     # B站Cookie配置模板
+├── requirements.txt        # Python依赖
+├── runtime.txt            # Python版本配置
+├── Procfile               # 部署启动命令
+├── render.yaml            # Render部署配置
 └── backend/                # 后端服务
     ├── main.py             # FastAPI主应用
-    ├── requirements.txt    # Python依赖
     ├── .env                # 环境变量配置（请勿上传）
-    ├── cookies.txt         # B站Cookie文件（可选，请勿上传）
     ├── app/
     │   ├── models/
     │   │   └── schemas.py  # Pydantic数据模型
     │   └── services/
     │       ├── ai_service.py      # AI分析服务
-    │       └── bili_service.py    # B站数据采集服务
+    │       ├── bili_service.py    # B站数据采集服务
+    │       ├── cookie_manager.py  # Cookie管理服务
+    │       └── ai_client.py       # AI客户端
     └── static/
         └── index.html      # Web前端界面
 ```
@@ -75,13 +77,13 @@ pip install -r requirements.txt
 
 3. **配置环境变量**
 ```bash
-# 从模板创建配置文件
-cp .env.example .env
+# 编辑backend/.env文件，配置API密钥和Cookies
+AI_PROVIDER=deepseek  # 或 gemini
+DEEPSEEK_API_KEY=your_key_here
+GEMINI_API_KEY=your_key_here
 
-# 编辑.env文件，配置AI API密钥
-# AI_PROVIDER=deepseek  # 或 gemini
-# DEEPSEEK_API_KEY=your_key_here
-# GEMINI_API_KEY=your_key_here
+# B站Cookies（可选，用于获取字幕）
+BILI_COOKIES=SESSDATA=your_sessdata; bili_jct=your_bili_jct; DedeUserID=your_dedeuserid
 ```
 
 4. **运行服务**
@@ -103,10 +105,17 @@ python main.py
 ### Cookie配置（可选）
 如果需要访问需要登录的视频内容：
 
+**本地开发：**
 1. 浏览器登录B站
 2. 按F12打开开发者工具
 3. 复制关键Cookie值：`SESSDATA`、`bili_jct`、`DedeUserID`
-4. 在项目根目录创建`cookies.txt`文件
+4. 在 `backend/.env` 文件中添加：
+```
+BILI_COOKIES=SESSDATA=your_sessdata; bili_jct=your_bili_jct; DedeUserID=your_dedeuserid
+```
+
+**生产部署：**
+在Render/Heroku等平台的"Environment Variables"中设置 `BILI_COOKIES`
 
 ## 📖 使用指南
 
@@ -124,12 +133,12 @@ python main.py
 
 ## 🛠️ 开发工具
 
-项目在 `backend/test/` 目录下提供了完整的开发工具集：
+项目提供了完整的开发工具集：
 
-- **`.cursorrules`** - AI助手环境配置（PowerShell语法等）
-- **`.env.example`** - 环境变量配置模板
-- **`cookies.txt.example`** - B站Cookie配置指南
-- **测试脚本** - 用于功能验证和问题诊断
+- **`backend/.env`** - 环境变量配置（本地开发）
+- **`backend/test/`** - 测试脚本和开发工具
+- **GitHub Actions** - 自动化部署和测试
+- **Render** - 云端部署平台
 
 ## 🤝 贡献指南
 
