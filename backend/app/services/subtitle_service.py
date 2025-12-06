@@ -332,7 +332,7 @@ class BrowserSubtitleStrategy(SubtitleStrategy):
 class CacheSubtitleStrategy(SubtitleStrategy):
     """字幕缓存策略"""
 
-    def __init__(self, cache_dir: Optional[Path] = None, ttl_hours: int = 24):
+    def __init__(self, cache_dir: Optional[Path] = None, ttl_hours: int = 0.5):  # 30分钟缓存
         super().__init__("Cache", priority=4)
         self.cache_dir = cache_dir or (Path(__file__).parent.parent.parent / "data" / "subtitle_cache")
         self.cache_dir.mkdir(parents=True, exist_ok=True)
