@@ -113,8 +113,18 @@ class SubtitleStrategy:
         # 检查是否是错误信息（以括号开头）
         if content.strip().startswith("(") or content.strip().startswith("⚠️"):
             return False
-        # 检查内容长度
-        return len(content.strip()) > 10
+        # 检查内容长度（至少100字符）
+        if len(content.strip()) < 100:
+            return False
+        # 检查行数（至少5行）
+        lines = [line.strip() for line in content.split('\n') if line.strip()]
+        if len(lines) < 5:
+            return False
+        # 检查是否包含时间戳格式
+        timestamp_pattern = r'\[\d{1,2}:\d{2}\]'
+        if not re.search(timestamp_pattern, content):
+            return False
+        return True
 
 # ============ API策略 ============
 
@@ -600,8 +610,18 @@ class SubtitleService:
         # 检查是否是错误信息（以括号开头）
         if content.strip().startswith("(") or content.strip().startswith("⚠️"):
             return False
-        # 检查内容长度
-        return len(content.strip()) > 10
+        # 检查内容长度（至少100字符）
+        if len(content.strip()) < 100:
+            return False
+        # 检查行数（至少5行）
+        lines = [line.strip() for line in content.split('\n') if line.strip()]
+        if len(lines) < 5:
+            return False
+        # 检查是否包含时间戳格式
+        timestamp_pattern = r'\[\d{1,2}:\d{2}\]'
+        if not re.search(timestamp_pattern, content):
+            return False
+        return True
 
     async def _cache_result(self, bvid: str, result: SubtitleResult):
         """缓存成功的结果"""
