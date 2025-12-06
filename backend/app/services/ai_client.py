@@ -61,6 +61,10 @@ class AIClient:
                 return self._call_gemini(prompt, max_tokens, temperature)
         except Exception as e:
             print(f"   [AI Error] {self.provider.upper()} 调用失败: {e}")
+            # 如果AI不可用，返回模拟数据用于测试
+            if not self.is_available():
+                print("   [AI Debug] AI服务不可用，返回模拟数据")
+                return self._get_mock_response(prompt)
             raise e
 
     def _call_deepseek(self, prompt: str, max_tokens: int, temperature: float) -> str:
@@ -104,6 +108,15 @@ class AIClient:
         print(f"   [AI Debug] 原始响应: {text[:200]}...")
         text = text.replace('```json', '').replace('```', '').strip()
         return text
+
+    def _get_mock_response(self, prompt: str) -> str:
+        """返回模拟AI响应用于测试"""
+        if "summary" in prompt.lower():
+            return "这是一个测试视频的摘要内容。由于AI服务未配置，这里返回模拟数据用于演示功能。"
+        elif "outline" in prompt.lower():
+            return "字幕大纲：\\n1. 00:00-00:30 视频开头介绍\\n2. 00:30-01:00 主要内容讲解\\n3. 01:00-01:30 总结和结尾"
+        else:
+            return "AI服务未配置，返回模拟响应。提示：请配置 GEMINI_API_KEY 或 DEEPSEEK_API_KEY 环境变量以启用完整功能。"
 
     def is_available(self) -> bool:
         """检查AI服务是否可用"""

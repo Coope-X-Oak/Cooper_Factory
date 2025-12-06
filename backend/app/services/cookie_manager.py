@@ -16,9 +16,30 @@ class CookieManager:
         self._load_cookies()
 
     def _load_cookies(self) -> None:
-        """加载Cookie文件"""
+        """加载Cookie文件或环境变量"""
+        # 首先尝试从环境变量加载
+        env_cookies = os.getenv("BILI_COOKIES", "").strip()
+        if env_cookies:
+            try:
+                # 环境变量格式：SESSDATA=xxx; bili_jct=yyy; ...
+                cookies = {}
+                for cookie_pair in env_cookies.split(';'):
+                    if '=' in cookie_pair:
+                        name, value = cookie_pair.strip().split('=', 1)
+                        cookies[name.strip()] = value.strip()
+
+                if cookies:
+                    self.cookies = cookies
+                    self.enabled = True
+                    print(f"   [Cookie] ✅ 已从环境变量加载 {len(cookies)} 个 Cookie 项")
+                    print("   [Cookie] ⚠️  注意：使用 Cookie 可能违反 B站服务条款，请谨慎使用")
+                    return
+            except Exception as e:
+                print(f"   [Cookie] ❌ 环境变量 Cookie 解析失败: {e}")
+
+        # 如果环境变量没有，尝试从文件加载
         if not self.cookie_file.exists():
-            print("   [Cookie] ℹ️  未找到 cookies.txt 文件，使用无 Cookie 模式")
+            print("   [Cookie] ℹ️  未找到 cookies.txt 文件且无环境变量，使用无 Cookie 模式")
             return
 
         try:
@@ -42,7 +63,7 @@ class CookieManager:
             if cookies:
                 self.cookies = cookies
                 self.enabled = True
-                print(f"   [Cookie] ✅ 已加载 {len(cookies)} 个 Cookie 项")
+                print(f"   [Cookie] ✅ 已从文件加载 {len(cookies)} 个 Cookie 项")
                 print("   [Cookie] ⚠️  注意：使用 Cookie 可能违反 B站服务条款，请谨慎使用")
             else:
                 print("   [Cookie] ⚠️  Cookie 文件存在但格式无效")
