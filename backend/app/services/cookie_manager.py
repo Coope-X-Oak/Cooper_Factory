@@ -5,6 +5,7 @@ Cookie管理器
 import os
 from pathlib import Path
 from typing import Dict, Optional
+from dotenv import load_dotenv
 
 class CookieManager:
     """Cookie管理器，负责加载和验证Cookie"""
@@ -17,6 +18,16 @@ class CookieManager:
 
     def _load_cookies(self) -> None:
         """加载Cookie文件或环境变量"""
+        # 加载环境变量文件
+        current_dir = Path(__file__).resolve().parent
+        backend_dir = current_dir.parent.parent
+        env_path = backend_dir / ".env"
+
+        if env_path.exists():
+            load_dotenv(dotenv_path=env_path, override=True)
+        else:
+            load_dotenv()
+
         # 首先尝试从环境变量加载
         env_cookies = os.getenv("BILI_COOKIES", "").strip()
         if env_cookies:
