@@ -70,20 +70,28 @@ async def fetch_video_data(bvid: str):
 
     log_print(f"🚀 [System] 启动混合采集引擎: {bvid}", "info")
 
-    # 1. 并行执行：API 采集基础信息 + 浏览器采集字幕 + 弹幕采集
-    #    (Playwright 和弹幕都启动较慢，尽早开始)
+    # 1. 并行执行：API 采集基础信息 + 弹幕采集
+    #    (避免字幕获取的并行竞争问题)
     log_print("📡 启动并行数据采集任务...", "info")
     task_meta = _fetch_metadata_via_api(bvid)
-    task_subtitle = subtitle_service.fetch(bvid)
     task_danmaku = _fetch_danmaku_via_api(bvid)  # 新增弹幕采集
 
     # 等待结果
     try:
-        results = await asyncio.gather(task_meta, task_subtitle, task_danmaku)
-        meta_data, subtitle_text, danmaku_text = results
-        log_print("✅ 所有采集任务完成", "info")
+        results = await asyncio.gather(task_meta, task_danmaku)
+        meta_data, danmaku_text = results
+        log_print("✅ 基础采集任务完成", "info")
     except Exception as e:
         log_print(f"❌ 采集流程异常: {e}", "error")
+        raise e
+
+    # 2. 单独获取字幕（避免并行竞争）
+    log_print("🎬 开始字幕获取...", "info")
+    try:
+        subtitle_text = await subtitle_service.fetch(bvid)
+        log_print("✅ 字幕获取完成", "info")
+    except Exception as e:
+        log_print(f"❌ 字幕获取异常: {e}", "error")
         raise e
 
     # 2. 解包数据

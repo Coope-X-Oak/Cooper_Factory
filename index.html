@@ -18,7 +18,7 @@
             </div>
             <div>
                 <h1 class="text-2xl font-bold text-slate-100 tracking-wider">COOPER <span class="text-cyan-400 neon-text">INTELLIGENCE</span> FACTORY</h1>
-                <p class="text-xs text-slate-500 font-mono mt-1">SYSTEM STATUS: ONLINE // PORT: 8000</p>
+                <p class="text-xs text-slate-500 font-mono mt-1">SYSTEM STATUS: ONLINE // PORT: 8000 // VERSION: 2.1-REFACTORED</p>
             </div>
         </header>
 
@@ -37,24 +37,94 @@
         </div>
 
         <div id="resultArea" class="hidden space-y-6">
-            <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
-                <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                    <span class="w-1 h-6 bg-cyan-500 rounded-full"></span> 核心摘要
-                </h3>
-                <p id="summaryText" class="text-slate-300 leading-relaxed"></p>
+            <!-- 标签页导航 -->
+            <div class="border-b border-slate-800">
+                <nav class="flex space-x-8">
+                    <button onclick="showTab('overview')" id="tab-overview" class="tab-button active py-4 px-1 border-b-2 font-medium text-sm">
+                        📊 总览分析
+                    </button>
+                    <button onclick="showTab('subtitle')" id="tab-subtitle" class="tab-button py-4 px-1 border-b-2 font-medium text-sm">
+                        🎬 字幕内容
+                    </button>
+                    <button onclick="showTab('danmaku')" id="tab-danmaku" class="tab-button py-4 px-1 border-b-2 font-medium text-sm">
+                        💬 弹幕内容
+                    </button>
+                    <button onclick="showTab('comments')" id="tab-comments" class="tab-button py-4 px-1 border-b-2 font-medium text-sm">
+                        💭 评论内容
+                    </button>
+                </nav>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- 总览分析标签页 -->
+            <div id="content-overview" class="tab-content">
                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
                     <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <span class="w-1 h-6 bg-green-500 rounded-full"></span> 智能速记
+                        <span class="w-1 h-6 bg-cyan-500 rounded-full"></span> 核心摘要
                     </h3>
-                    <div id="notesList" class="space-y-3"></div>
+                    <p id="summaryText" class="text-slate-300 leading-relaxed"></p>
                 </div>
                 <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
                     <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <span class="w-1 h-6 bg-purple-500 rounded-full"></span> 图谱数据 (JSON)
+                        <span class="w-1 h-6 bg-green-500 rounded-full"></span> 字幕大纲
                     </h3>
-                    <pre id="graphData" class="text-xs text-slate-400 font-mono overflow-auto h-64 bg-slate-950 p-4 rounded"></pre>
+                    <pre id="outlineText" class="text-slate-300 whitespace-pre-wrap font-mono text-sm"></pre>
+                </div>
+            </div>
+
+            <!-- 字幕内容标签页 -->
+            <div id="content-subtitle" class="tab-content hidden">
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <span class="w-1 h-6 bg-blue-500 rounded-full"></span> 字幕内容
+                        </h3>
+                        <button onclick="analyzeContent('subtitle')" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg font-medium transition">
+                            🤖 AI分析字幕
+                        </button>
+                    </div>
+                    <div id="subtitleContent" class="text-slate-300 whitespace-pre-wrap font-mono text-sm max-h-96 overflow-auto bg-slate-950 p-4 rounded"></div>
+                    <div id="subtitleAnalysis" class="hidden mt-4 p-4 bg-slate-800 rounded-lg">
+                        <h4 class="text-white font-medium mb-2">AI分析结果：</h4>
+                        <div id="subtitleAnalysisContent" class="text-slate-300"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 弹幕内容标签页 -->
+            <div id="content-danmaku" class="tab-content hidden">
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <span class="w-1 h-6 bg-pink-500 rounded-full"></span> 弹幕内容
+                        </h3>
+                        <button onclick="analyzeContent('danmaku')" class="bg-pink-600 hover:bg-pink-500 text-white px-4 py-2 rounded-lg font-medium transition">
+                            🤖 AI分析弹幕
+                        </button>
+                    </div>
+                    <div id="danmakuContent" class="text-slate-300 whitespace-pre-wrap font-mono text-sm max-h-96 overflow-auto bg-slate-950 p-4 rounded"></div>
+                    <div id="danmakuAnalysis" class="hidden mt-4 p-4 bg-slate-800 rounded-lg">
+                        <h4 class="text-white font-medium mb-2">AI分析结果：</h4>
+                        <div id="danmakuAnalysisContent" class="text-slate-300"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 评论内容标签页 -->
+            <div id="content-comments" class="tab-content hidden">
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <span class="w-1 h-6 bg-yellow-500 rounded-full"></span> 评论内容
+                        </h3>
+                        <button onclick="analyzeContent('comments')" class="bg-yellow-600 hover:bg-yellow-500 text-white px-4 py-2 rounded-lg font-medium transition">
+                            🤖 AI分析评论
+                        </button>
+                    </div>
+                    <div id="commentsContent" class="text-slate-300 whitespace-pre-wrap font-mono text-sm max-h-96 overflow-auto bg-slate-950 p-4 rounded"></div>
+                    <div id="commentsAnalysis" class="hidden mt-4 p-4 bg-slate-800 rounded-lg">
+                        <h4 class="text-white font-medium mb-2">AI分析结果：</h4>
+                        <div id="commentsAnalysisContent" class="text-slate-300"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -91,15 +161,81 @@
 
         function renderData(data) {
             document.getElementById('resultArea').classList.remove('hidden');
-            document.getElementById('summaryText').innerText = data.summary;
-            const notesHtml = data.notes.map(n => `
-                <div class="flex gap-3 text-sm border-b border-slate-800 pb-2 last:border-0">
-                    <span class="text-cyan-400 font-mono whitespace-nowrap">${n.time}</span>
-                    <span class="text-slate-300">${n.content}</span>
-                </div>
-            `).join('');
-            document.getElementById('notesList').innerHTML = notesHtml;
-            document.getElementById('graphData').innerText = JSON.stringify(data.graphNodes, null, 2);
+
+            // 显示总览分析
+            document.getElementById('summaryText').innerText = data.summary || '暂无摘要';
+            document.getElementById('outlineText').innerText = data.subtitleOutline || '暂无大纲';
+
+            // 显示原始数据
+            document.getElementById('subtitleContent').innerText = data.rawData?.subtitle || '暂无字幕内容';
+            document.getElementById('danmakuContent').innerText = data.rawData?.danmaku || '暂无弹幕内容';
+            document.getElementById('commentsContent').innerText = data.rawData?.comments || '暂无评论内容';
+
+            // 默认显示总览标签页
+            showTab('overview');
+        }
+
+        function showTab(tabName) {
+            // 隐藏所有标签内容
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.add('hidden'));
+
+            // 移除所有标签的激活状态
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => {
+                button.classList.remove('active', 'border-cyan-500', 'text-cyan-400');
+                button.classList.add('border-transparent', 'text-slate-500');
+            });
+
+            // 显示选中的标签内容
+            document.getElementById(`content-${tabName}`).classList.remove('hidden');
+
+            // 激活选中的标签按钮
+            const activeButton = document.getElementById(`tab-${tabName}`);
+            activeButton.classList.add('active', 'border-cyan-500', 'text-cyan-400');
+            activeButton.classList.remove('border-transparent', 'text-slate-500');
+        }
+
+        async function analyzeContent(contentType) {
+            const contentMap = {
+                'subtitle': 'subtitleContent',
+                'danmaku': 'danmakuContent',
+                'comments': 'commentsContent'
+            };
+
+            const contentElement = document.getElementById(contentMap[contentType]);
+            const analysisElement = document.getElementById(`${contentType}Analysis`);
+            const analysisContentElement = document.getElementById(`${contentType}AnalysisContent`);
+
+            if (!contentElement || !contentElement.innerText.trim()) {
+                alert('没有内容可以分析');
+                return;
+            }
+
+            // 显示加载状态
+            analysisContentElement.innerText = '正在分析中...';
+            analysisElement.classList.remove('hidden');
+
+            try {
+                const response = await fetch('/analyze-content', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        content: contentElement.innerText,
+                        content_type: contentType
+                    })
+                });
+
+                if (!response.ok) throw new Error('AI分析请求失败');
+
+                const result = await response.json();
+                analysisContentElement.innerText = result.analysis || '分析完成';
+
+            } catch (error) {
+                analysisContentElement.innerText = `分析失败: ${error.message}`;
+            }
         }
     </script>
 </body>
